@@ -1,0 +1,133 @@
+body {
+  margin: 0;
+  font-family: 'Arial', sans-serif;
+}
+
+.text-generation-container {
+  display: flex;
+  flex-direction: column;
+  height: 100vh;
+  background-size: cover;
+  overflow: hidden;
+}
+
+.login-container {
+  margin: auto;
+  text-align: center;
+  padding: 20px;
+  background-color: rgba(255, 255, 255, 0.8); /* Transparent white background */
+  border-radius: 10px;
+}
+
+.chat-container {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+
+.chat-history {
+  flex: 1;
+  overflow-y: auto;
+  padding: 10px;
+  background-color: rgba(0, 0, 0, 0.8); /* Black background for history */
+  border-radius: 10px;
+}
+
+.user-input {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 10px;
+  background-color: rgba(255, 255, 255, 0.8); /* Transparent white background */
+  border-radius: 10px;
+}
+
+.text-input {
+  flex: 1;
+  resize: none;
+  padding: 5px;
+  margin-right: 10px;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+}
+
+.generate-button {
+  padding: 5px 10px;
+  background-color: #4caf50;
+  color: white;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+}
+/* Add this style at the end of your existing CSS file */
+
+.login-container {
+  display: flex;
+  flex-direction: column;
+}
+
+.text-input {
+  width: calc(100% - 10px); /* Width minus padding */
+}
+
+.sidebar.visible {
+  transform: translateX(0);
+}
+
+.sidebar {
+  display: flex;
+  flex-direction: column;
+  width: 300px;
+  margin-top: 20px;
+  padding: 10px;
+  background-color: rgba(255, 255, 255, 0.8); /* Transparent white background */
+  border-radius: 10px;
+  transition: transform 0.3s ease; /* Add smooth transition effect */
+  transform: translateX(-100%);
+}
+
+.sidebar.visible {
+  transform: translateX(0);
+}
+
+.history-toggle {
+  width: 100%;
+  padding: 10px;
+  background-color: #3498db;
+  color: white;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+}
+
+.prompt-suggestions {
+  margin-top: 20px;
+}
+
+.settings {
+  margin-top: 20px;
+}
+
+.forgot-password {
+  margin-top: 20px;
+}
+
+.forgot-password-email {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  margin-top: 10px;
+}
+
+.toggle-sidebar {
+  position: fixed;
+  bottom: 20px;
+  right: 20px;
+  background-color: #3498db;
+  color: white;
+  padding: 10px;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+}
