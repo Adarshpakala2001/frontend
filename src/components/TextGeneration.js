@@ -8,24 +8,29 @@ const TextGeneration = () => {
   const [prompt, setPrompt] = useState('');
   const [chatHistory, setChatHistory] = useState([]);
   const [showHistory, setShowHistory] = useState(false);
-  const [pageBackground, setPageBackground] = useState(null); // Default background null
+  const [pageBackground, setPageBackground] = useState(null);
   const [isLoggedIn, setLoggedIn] = useState(false);
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [newAccount, setNewAccount] = useState(false);
-  const [uploadedImage, setUploadedImage] = useState(null);
   const [forgotPasswordEmail, setForgotPasswordEmail] = useState('');
   const [fileInputRef, setFileInputRef] = useState(null);
-  const [backgroundColor, setBackgroundColor] = useState('#ffffff'); // Default background color is white
+  const [backgroundColor, setBackgroundColor] = useState('#ffffff');
   const [profileVisible, setProfileVisible] = useState(false);
-  
+
+  const chatHistoryRef = useRef(null);
+
+  useEffect(() => {
+    if (chatHistoryRef.current) {
+      chatHistoryRef.current.scrollTop = chatHistoryRef.current.scrollHeight;
+    }
+  }, [chatHistory]);
 
   const handleGenerateText = async () => {
     try {
       const response = await axios.post('http://localhost:8000/generate-text', { prompt });
-      const generatedText = response.data.generatedText;
+      const generatedText = response.data.generated_text;
 
-      // Update chat history with user prompt and generated text
       setChatHistory([...chatHistory, { role: 'user', text: prompt }, { role: 'assistant', text: generatedText }]);
     } catch (error) {
       console.error('Error generating text:', error);
@@ -33,15 +38,16 @@ const TextGeneration = () => {
   };
 
   const handleImageUpload = () => {
-    fileInputRef.current.click();
+    if (fileInputRef) {
+      fileInputRef.current.click();
+    }
   };
 
   const handleFileChange = (e) => {
     const file = e.target.files[0];
-    // Use FileReader to display the uploaded image
     const reader = new FileReader();
     reader.onload = () => {
-      setUploadedImage(reader.result);
+      setFileInputRef(reader.result);
       setPageBackground(`url(${reader.result})`);
     };
     reader.readAsDataURL(file);
@@ -49,8 +55,6 @@ const TextGeneration = () => {
 
   const handleLogin = async () => {
     try {
-      // Implement authentication logic here (e.g., check credentials with a backend server)
-      // For simplicity, I'll setLoggedIn to true if email and password are non-empty
       if (email && password) {
         setLoggedIn(true);
       }
@@ -61,8 +65,6 @@ const TextGeneration = () => {
 
   const handleCreateAccount = async () => {
     try {
-      // Implement account creation logic here
-      // For simplicity, I'll setLoggedIn to true if email and password are non-empty
       if (email && password) {
         setLoggedIn(true);
       }
@@ -73,7 +75,6 @@ const TextGeneration = () => {
 
   const handleForgotPassword = async () => {
     try {
-      // Implement logic to send an email with login credentials to the entered email
       console.log('Sending email with login credentials to:', forgotPasswordEmail);
     } catch (error) {
       console.error('Error during forgot password:', error);
@@ -85,7 +86,7 @@ const TextGeneration = () => {
   };
 
   return (
-    <div className="text-generation-container" style={{ backgroundImage: pageBackground, backgroundColor }}>
+    <div className={`text-generation-container ${isLoggedIn ? 'logged-in' : ''}`}>
       {!isLoggedIn ? (
         <div className="login-container">
           <input
@@ -124,30 +125,28 @@ const TextGeneration = () => {
           </div>
         </div>
       ) : (
-        <div className="chat-container">
-          <div className={`chat-history ${showHistory ? 'active' : ''}`}>
-            {chatHistory.map((message, index) => (
-              <div key={index} className={`message ${message.role}`}>
-                <p>{message.text}</p>
-              </div>
-            ))}
+        <>
+          <div className="chat-container">
+            <div ref={chatHistoryRef} className={`chat-history ${showHistory ? 'active' : ''}`}>
+              {chatHistory.map((message, index) => (
+                <div key={index} className={`message ${message.role}`}>
+                  <p>{message.text}</p>
+                </div>
+              ))}
+            </div>
+            <div className="user-input">
+              <textarea
+                className="text-input"
+                value={prompt}
+                onChange={(e) => setPrompt(e.target.value)}
+                placeholder="Type your prompt here"
+              />
+              <button className="generate-button" onClick={handleGenerateText}>
+                Generate Text
+              </button>
+            </div>
           </div>
-          <div className="user-input">
-            <textarea
-              className="text-input"
-              value={prompt}
-              onChange={(e) => setPrompt(e.target.value)}
-              placeholder="Type your prompt here"
-            />
-            <button className="generate-button" onClick={handleGenerateText}>
-              Generate Text
-            </button>
-          </div>
-        </div>
-      )}
-      <div className={`sidebar ${profileVisible ? 'visible' : ''}`}>
-        {isLoggedIn && (
-          <>
+          <div className={`sidebar ${profileVisible ? 'visible' : ''}`}>
             <button className="history-toggle" onClick={() => setShowHistory(!showHistory)}>
               {showHistory ? 'Hide History' : 'Show History'}
             </button>
@@ -157,7 +156,6 @@ const TextGeneration = () => {
                 <li>Describe a scenario for a short story.</li>
                 <li>Ask for advice on a topic.</li>
                 <li>Compose a poem about nature.</li>
-                {/* Add more prompt suggestions as needed */}
               </ul>
             </div>
             <div className="settings">
@@ -175,19 +173,17 @@ const TextGeneration = () => {
                 <input
                   type="file"
                   accept="image/*"
-                  ref={setFileInputRef}
+                  ref={(ref) => setFileInputRef(ref)}
                   style={{ display: 'none' }}
                   onChange={handleFileChange}
                 />
                 <button onClick={handleImageUpload}>Upload Image</button>
               </label>
             </div>
-          </>
-        )}
-      </div>
-      <div className="toggle-sidebar" onClick={handleToggleSidebar}>
-        {profileVisible ? 'Close Sidebar' : 'Open Sidebar'}
-      </div>
+          </div>
+        </>
+      )}
+      {isLoggedIn && <div className="toggle-sidebar" onClick={handleToggleSidebar}>Toggle Sidebar</div>}
     </div>
   );
 };
