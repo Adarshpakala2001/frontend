@@ -8,7 +8,6 @@ const TextGeneration = () => {
   const [prompt, setPrompt] = useState('');
   const [chatHistory, setChatHistory] = useState([]);
   const [showHistory, setShowHistory] = useState(false);
-  const [pageBackground, setPageBackground] = useState(null);
   const [isLoggedIn, setLoggedIn] = useState(false);
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
@@ -48,7 +47,7 @@ const TextGeneration = () => {
     const reader = new FileReader();
     reader.onload = () => {
       setFileInputRef(reader.result);
-      setPageBackground(`url(${reader.result})`);
+      setBackgroundColor(`url(${reader.result})`);
     };
     reader.readAsDataURL(file);
   };
